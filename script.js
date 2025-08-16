@@ -1,4 +1,16 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+    const locale = await fetch('locale/es.json').then(res => res.json());
+    const t = (path, params = {}) => {
+        const keys = path.split('.');
+        let result = locale;
+        for (const k of keys) {
+            result = result?.[k];
+        }
+        if (typeof result !== 'string') return '';
+        return result.replace(/\{(\w+)\}/g, (_, key) => params[key] ?? '');
+    };
+
+    document.title = t('app.title');
     // -----------------------------
     // App State
     // -----------------------------
@@ -26,6 +38,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const totalsPanelContainer = document.getElementById('totals-panel-container');
     const scoresPanelToggle = document.getElementById('scores-panel-toggle');
     const totalsPanelToggle = document.getElementById('totals-panel-toggle');
+    if (scoresPanelToggle) scoresPanelToggle.title = t('play.panels.toggleScores');
+    if (totalsPanelToggle) totalsPanelToggle.title = t('play.panels.toggleTotals');
 
     // -----------------------------
     // Core Game Logic (Pure Functions)
@@ -108,7 +122,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // -----------------------------
     function startGame(playerNames) {
         const P = clamp(playerNames.length, 2, 6);
-        const newPlayers = playerNames.slice(0, P).map((n, i) => ({ id: `p${i + 1}`, name: n.trim() || `J${i + 1}` }));
+        const newPlayers = playerNames.slice(0, P).map((n, i) => ({ id: `p${i + 1}`, name: n.trim() || t('setup.playerPlaceholder', { index: i + 1 }) }));
         const R = roundsForPlayers(P);
         
         state.players = newPlayers;
@@ -132,9 +146,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const P = clamp(newCount, 2, 6);
         state.playerCount = P;
         const currentPlayers = state.players.map(p => p.name);
-        const nextPlayers = Array.from({ length: P }, (_, i) => ({ 
-            id: `p${i + 1}`, 
-            name: currentPlayers[i] || `Jugador ${i + 1}` 
+        const nextPlayers = Array.from({ length: P }, (_, i) => ({
+            id: `p${i + 1}`,
+            name: currentPlayers[i] || t('setup.playerPlaceholder', { index: i + 1 })
         }));
         state.players = nextPlayers;
         state.rounds = roundsForPlayers(P);
@@ -221,13 +235,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function renderHeader() {
         const controls = state.step === 'play'
-            ? `<button id="change-players-btn" class="btn btn-secondary">Cambiar jugadores</button>
-               <button id="restart-btn" class="btn btn-ghost btn-icon" title="Reiniciar partida"><i data-lucide="refresh-cw"></i></button>`
-            : `<button id="restart-btn" class="btn btn-ghost btn-icon" title="Reiniciar partida"><i data-lucide="refresh-cw"></i></button>`;
-        
+            ? `<button id="change-players-btn" class="btn btn-secondary">${t('app.header.changePlayers')}</button>
+               <button id="restart-btn" class="btn btn-ghost btn-icon" title="${t('app.header.restart')}"><i data-lucide="refresh-cw"></i></button>`
+            : `<button id="restart-btn" class="btn btn-ghost btn-icon" title="${t('app.header.restart')}"><i data-lucide="refresh-cw"></i></button>`;
+
         return `
             <header>
-                <h1>Quiz! Web 2025</h1>
+                <h1>${t('app.header.title')}</h1>
                 <div class="controls">${controls}</div>
             </header>
         `;
@@ -237,12 +251,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const R = roundsForPlayers(state.playerCount);
         const playerInputs = state.players.map((p, i) => `
             <div>
-                <label for="name-${i}" class="label">Nombre del jugador ${i + 1}</label>
+                <label for="name-${i}" class="label">${t('setup.playerNameLabel', { index: i + 1 })}</label>
                 <div style="position: relative;">
                     <input
                         id="name-${i}"
                         class="input player-name-input"
-                        placeholder="Jugador ${i + 1}"
+                        placeholder="${t('setup.playerPlaceholder', { index: i + 1 })}"
                         value="${p.name}"
                         data-index="${i}"
                         style="padding-right: 2rem;"
@@ -251,7 +265,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         class="clear-name-btn"
                         data-action="clear-name"
                         data-index="${i}"
-                        title="Borrar"
+                        title="${t('setup.clearName')}"
                         style="position:absolute; right:0.5rem; top:50%; transform:translateY(-50%); background:transparent; border:none; color: var(--slate-400); font-size: 1rem; line-height:1; cursor:pointer;"
                     >×</button>
                 </div>
@@ -262,10 +276,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         return `
             <div class="card">
-                <div class="card-header"><h2 class="card-title">Configuración del juego</h2></div>
+                <div class="card-header"><h2 class="card-title">${t('setup.gameConfigTitle')}</h2></div>
                 <div class="card-content" style="display: flex; flex-direction: column; gap: 1rem;">
                     <div>
-                        <label for="player-count" class="label">Número de jugadores (2–6)</label>
+                        <label for="player-count" class="label">${t('setup.playerCountLabel')}</label>
                         <div class="input-group" style="display: flex; align-items: center; gap: 0.5rem;">
                             <button class="btn btn-secondary btn-icon" data-action="player-count-dec">-</button>
                             <input
@@ -281,12 +295,12 @@ document.addEventListener("DOMContentLoaded", () => {
                             <button class="btn btn-secondary btn-icon" data-action="player-count-inc">+</button>
                         </div>
                         <p class="text-sm" style="margin-top: 0.5rem; color: var(--slate-300);">
-                            Rondas = ⌊52 / P⌋ = <span style="font-weight: 600; color: var(--cyan-300);">${R}</span>
+                            ${t('setup.roundsFormula', { rounds: `<span style="font-weight: 600; color: var(--cyan-300);">${R}</span>` })}
                         </p>
                     </div>
                     <div class="setup-grid">${playerInputs}</div>
                     <div style="padding-top: 0.5rem;">
-                        <button id="start-game-btn" class="btn btn-primary" ${!canStart ? 'disabled' : ''}>Iniciar partida</button>
+                        <button id="start-game-btn" class="btn btn-primary" ${!canStart ? 'disabled' : ''}>${t('setup.startGame')}</button>
                     </div>
                 </div>
             </div>
@@ -327,12 +341,12 @@ document.addEventListener("DOMContentLoaded", () => {
                             </div>
                         </th>
                     `).join('')}
-                    <th rowspan="2" style="width: 140px;">Acciones</th>
+                    <th rowspan="2" style="width: 140px;">${t('play.table.actions')}</th>
                 </tr>
                 <tr>
                     ${state.players.map(() => `
-                        <th style="color: var(--cyan-300);">Apuesta</th>
-                        <th style="color: var(--fuchsia-300);">Hecho</th>
+                        <th style="color: var(--cyan-300);">${t('play.table.bid')}</th>
+                        <th style="color: var(--fuchsia-300);">${t('play.table.actual')}</th>
                     `).join('')}
                 </tr>
             </thead>`;
@@ -354,24 +368,24 @@ document.addEventListener("DOMContentLoaded", () => {
                     let flowContent = '';
                     if (rd.phase === 'bids') {
                         flowContent = `
-                            ${rd.bidsInvalid ? `<span class="badge badge-invalid" title="La suma de apuestas es igual al número de la ronda (no permitido)"><i data-lucide="alert-triangle" style="width:12px; height:12px;"></i></span>` : ''}
+                            ${rd.bidsInvalid ? `<span class="badge badge-invalid" title="${t('play.table.bidsInvalid')}"><i data-lucide="alert-triangle" style="width:12px; height:12px;"></i></span>` : ''}
                             <button class="btn btn-cyan" data-action="open-bids" data-round-index="${idx}">
-                                <i data-lucide="list-ordered" style="width:16px; height:16px;"></i> Apuesta
+                                <i data-lucide="list-ordered" style="width:16px; height:16px;"></i> ${t('play.table.enterBid')}
                             </button>
                         `;
                     } else if (rd.phase === 'actuals') {
                         flowContent = `
-                            ${rd.actualsInvalid ? `<span class="badge badge-invalid" title="Los hechos deben sumar el número de la ronda"><i data-lucide="alert-triangle" style="width:12px; height:12px;"></i></span>` : ''}
-                            <button class="btn btn-secondary btn-icon" title="Desbloquear apuestas" data-action="unlock-bids" data-round-index="${idx}">
+                            ${rd.actualsInvalid ? `<span class="badge badge-invalid" title="${t('play.table.actualsInvalid')}"><i data-lucide="alert-triangle" style="width:12px; height:12px;"></i></span>` : ''}
+                            <button class="btn btn-secondary btn-icon" title="${t('play.table.unlockBids')}" data-action="unlock-bids" data-round-index="${idx}">
                                 <i data-lucide="unlock" style="width:16px; height:16px;"></i>
                             </button>
                             <button class="btn btn-fuchsia" data-action="open-actuals" data-round-index="${idx}">
-                                <i data-lucide="calculator" style="width:16px; height:16px;"></i> Hechos
+                                <i data-lucide="calculator" style="width:16px; height:16px;"></i> ${t('play.table.enterActual')}
                             </button>
                         `;
                     } else if (rd.phase === 'done') {
                         flowContent = `
-                            <button class="btn btn-secondary" title="Deshacer" data-action="revert-final" data-round-index="${idx}">Deshacer</button>
+                            <button class="btn btn-secondary" title="${t('play.table.undo')}" data-action="revert-final" data-round-index="${idx}">${t('play.table.undo')}</button>
                         `;
                     }
 
@@ -449,7 +463,7 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
         document.getElementById('scores-panel-content').innerHTML = `
             <div class="card">
-                <div class="card-header"><h2 class="card-title">Puntos por ronda</h2></div>
+                <div class="card-header"><h2 class="card-title">${t('play.panels.scores')}</h2></div>
                 <div class="card-content" style="padding: 0;">
                     <div class="table-wrapper" style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
                         <table>${header}${body}</table>
@@ -469,15 +483,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
                 <div class="totals-stats">
                     <div>
-                        <div class="stat-label">Acumulado</div>
+                        <div class="stat-label">${t('play.panels.statAccumulated')}</div>
                         <div class="stat-value" style="color: var(--sky-300);">${tallies.cumulative[p.id]}</div>
                     </div>
                     <div>
-                        <div class="stat-label">Porcentaje</div>
+                        <div class="stat-label">${t('play.panels.statPercentage')}</div>
                         <div class="stat-value" style="color: var(--fuchsia-300);">${tallies.sharePct[p.id].toFixed(1)}%</div>
                     </div>
                     <div>
-                        <div class="stat-label">Aciertos exactos</div>
+                        <div class="stat-label">${t('play.panels.statExactHits')}</div>
                         <div class="stat-value" style="color: var(--emerald-300);">${tallies.exactHits[p.id]}</div>
                     </div>
                 </div>
@@ -486,12 +500,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         document.getElementById('totals-panel-content').innerHTML = `
             <div class="card">
-                <div class="card-header"><h2 class="card-title">Totales y porcentajes</h2></div>
+                <div class="card-header"><h2 class="card-title">${t('play.panels.totals')}</h2></div>
                 <div class="card-content">
                     <div class="totals-grid">
                         ${playerRows}
                         <div class="totals-row summary">
-                            <span style="color: var(--slate-400);">Total acumulado</span>
+                            <span style="color: var(--slate-400);">${t('play.panels.summaryTotal')}</span>
                             <span class="stat-value" style="color: var(--indigo-300);">${tallies.cumTotal}</span>
                         </div>
                     </div>
@@ -511,7 +525,9 @@ document.addEventListener("DOMContentLoaded", () => {
             const allFilled = state.players.every(p => typeof tempBids[p.id] === 'number');
             const isValid = allFilled && sum !== rd.r;
 
-            bidsDialogEl.querySelector('#bids-sum-badge').innerHTML = `Suma ${sum} ${sum === rd.r ? `= ${rd.r} (no permitido)` : `≠ ${rd.r} (válido)`}`;
+            const sumLabel = t('dialogs.bids.sum', { sum });
+            const eqLabel = sum === rd.r ? t('dialogs.bids.sumEqual', { round: rd.r }) : t('dialogs.bids.sumNotEqual', { round: rd.r });
+            bidsDialogEl.querySelector('#bids-sum-badge').innerHTML = `${sumLabel} ${eqLabel}`;
             bidsDialogEl.querySelector('#bids-sum-badge').className = `badge ${sum === rd.r ? 'badge-invalid' : 'badge-cyan'}`;
             bidsDialogEl.querySelector('#save-bids-btn').disabled = !isValid;
         };
@@ -519,10 +535,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const content = `
             <div class="dialog-header">
                 <h2>
-                    <span>Ingresar apuestas — Ronda ${rd.r}</span>
+                    <span>${t('dialogs.bids.title', { round: rd.r })}</span>
                     <span id="bids-sum-badge" class="badge"></span>
                 </h2>
-                <p>Ingrese la apuesta de cada jugador (0–${rd.r}). La suma total no debe ser igual a ${rd.r}.</p>
+                <p>${t('dialogs.bids.instruction', { round: rd.r })}</p>
             </div>
             <div class="dialog-body">
                 ${state.players.map(p => `
@@ -537,10 +553,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 `).join('')}
             </div>
             <div class="dialog-footer">
-                <span class="footer-note">Todas las apuestas son obligatorias.</span>
+                <span class="footer-note">${t('dialogs.bids.allRequired')}</span>
                 <div class="footer-actions">
-                    <button id="cancel-bids-btn" class="btn btn-secondary">Cancelar</button>
-                    <button id="save-bids-btn" class="btn btn-cyan">Guardar y bloquear apuestas</button>
+                    <button id="cancel-bids-btn" class="btn btn-secondary">${t('dialogs.bids.cancel')}</button>
+                    <button id="save-bids-btn" class="btn btn-cyan">${t('dialogs.bids.save')}</button>
                 </div>
             </div>
         `;
@@ -588,7 +604,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const allFilled = state.players.every(p => typeof tempActuals[p.id] === 'number');
             const isValid = allFilled && sum === rd.r;
 
-            actualsDialogEl.querySelector('#actuals-sum-badge').innerHTML = `Suma: ${sum} / ${rd.r}`;
+            actualsDialogEl.querySelector('#actuals-sum-badge').innerHTML = t('dialogs.actuals.sum', { sum, round: rd.r });
             actualsDialogEl.querySelector('#actuals-sum-badge').className = `badge ${sum === rd.r ? 'badge-fuchsia' : 'badge-invalid'}`;
             actualsDialogEl.querySelector('#save-actuals-btn').disabled = !isValid;
         };
@@ -596,10 +612,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const content = `
             <div class="dialog-header">
                 <h2>
-                    <span>Ingresar hechos — Ronda ${rd.r}</span>
+                    <span>${t('dialogs.actuals.title', { round: rd.r })}</span>
                     <span id="actuals-sum-badge" class="badge"></span>
                 </h2>
-                <p>Ingrese los hechos (0–${rd.r}). La suma total debe ser igual a ${rd.r}.</p>
+                <p>${t('dialogs.actuals.instruction', { round: rd.r })}</p>
             </div>
             <div class="dialog-body">
                 ${state.players.map(p => `
@@ -614,10 +630,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 `).join('')}
             </div>
             <div class="dialog-footer">
-                <span class="footer-note">Todos los hechos son obligatorios.</span>
+                <span class="footer-note">${t('dialogs.actuals.allRequired')}</span>
                 <div class="footer-actions">
-                    <button id="cancel-actuals-btn" class="btn btn-secondary">Cancelar</button>
-                    <button id="save-actuals-btn" class="btn btn-fuchsia">Guardar y finalizar</button>
+                    <button id="cancel-actuals-btn" class="btn btn-secondary">${t('dialogs.actuals.cancel')}</button>
+                    <button id="save-actuals-btn" class="btn btn-fuchsia">${t('dialogs.actuals.save')}</button>
                 </div>
             </div>
         `;
