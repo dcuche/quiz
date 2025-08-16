@@ -1,0 +1,62 @@
+{
+  "app": {
+    "title": "Quiz!",
+    "header": {
+      "title": "Quiz! Web 2025",
+      "changePlayers": "Cambiar jugadores",
+      "restart": "Reiniciar partida"
+    }
+  },
+  "setup": {
+    "gameConfigTitle": "Configuración del juego",
+    "playerNameLabel": "Nombre del jugador {index}",
+    "playerPlaceholder": "Jugador {index}",
+    "clearName": "Borrar",
+    "playerCountLabel": "Número de jugadores (2–6)",
+    "roundsFormula": "Rondas = ⌊52 / P⌋ = {rounds}",
+    "startGame": "Iniciar partida"
+  },
+  "play": {
+    "table": {
+      "actions": "Acciones",
+      "bid": "Apuesta",
+      "actual": "Hecho",
+      "enterBid": "Apuesta",
+      "enterActual": "Hechos",
+      "unlockBids": "Desbloquear apuestas",
+      "undo": "Deshacer",
+      "bidsInvalid": "La suma de apuestas es igual al número de la ronda (no permitido)",
+      "actualsInvalid": "Los hechos deben sumar el número de la ronda"
+    },
+    "panels": {
+      "scores": "Puntos por ronda",
+      "totals": "Totales y porcentajes",
+      "statAccumulated": "Acumulado",
+      "statPercentage": "Porcentaje",
+      "statExactHits": "Aciertos exactos",
+      "summaryTotal": "Total acumulado",
+      "toggleScores": "Mostrar/ocultar panel de puntuaciones",
+      "toggleTotals": "Mostrar/ocultar panel de totales"
+    }
+  },
+  "dialogs": {
+    "bids": {
+      "title": "Ingresar apuestas — Ronda {round}",
+      "instruction": "Ingrese la apuesta de cada jugador (0–{round}). La suma total no debe ser igual a {round}.",
+      "sum": "Suma {sum}",
+      "sumEqual": "= {round} (no permitido)",
+      "sumNotEqual": "≠ {round} (válido)",
+      "allRequired": "Todas las apuestas son obligatorias.",
+      "cancel": "Cancelar",
+      "save": "Guardar y bloquear apuestas"
+    },
+    "actuals": {
+      "title": "Ingresar hechos — Ronda {round}",
+      "instruction": "Ingrese los hechos (0–{round}). La suma total debe ser igual a {round}.",
+      "sum": "Suma: {sum} / {round}",
+      "allRequired": "Todos los hechos son obligatorios.",
+      "cancel": "Cancelar",
+      "save": "Guardar y finalizar"
+    }
+  }
+}

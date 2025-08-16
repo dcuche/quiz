@@ -1,0 +1,24 @@
+# Quiz! Scoreboard
+
+Simple web‑based scoreboard for the **Quiz!** card game.  
+The interface text is in Spanish and runs entirely in the browser.
+
+## Features
+- Player setup screen (2–6 players) with dynamic round count.
+- Rotating commander shown next to each round number.
+- Bids and actuals entered in modal dialogs with validation and in-dialog lock/finalize actions.
+- Automatic scoring, per-round and cumulative summaries.
+- Collapsible side panel for “Puntos por ronda” and bottom panel for “Totales y porcentajes”.
+
+## Getting Started
+Open `index.html` in a modern browser—no build step or server is required.
+
+## Repository Structure
+- `index.html` – main HTML and panel containers  
+- `script.js` – game logic, rendering, and interaction handlers  
+- `style.css` – styling and layout
+
+## Gameplay Notes
+- Bids in a round must not sum to the number of tricks for that round.
+- Actuals must sum exactly to the number of tricks.
+- Scoring: exact = 10 + tricks; miss = 10 – max(bid, actual).
