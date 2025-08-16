@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz!</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script defer src="script.js"></script>
+</head>
+<body>
+
+    <div class="background-glow"></div>
+
+    <div id="app-container">
+        <!-- Main application will be rendered here by script.js -->
+    </div>
+
+    <!-- Collapsible Side Panel for Scores -->
+    <div id="scores-panel-container" class="panel-container side-panel closed">
+        <button id="scores-panel-toggle" class="panel-toggle side-toggle" title="Toggle Scores Panel">
+            <i data-lucide="list-ordered"></i>
+        </button>
+        <div id="scores-panel-content" class="panel-content">
+            <!-- Scores card will be rendered here -->
+        </div>
+    </div>
+
+    <!-- Collapsible Bottom Panel for Totals -->
+    <div id="totals-panel-container" class="panel-container bottom-panel closed">
+        <button id="totals-panel-toggle" class="panel-toggle bottom-toggle" title="Toggle Totals Panel">
+            <i data-lucide="bar-chart-3"></i>
+        </button>
+        <div id="totals-panel-content" class="panel-content">
+            <!-- Totals card will be rendered here -->
+        </div>
+    </div>
+
+
+    <!-- Dialog for entering Bids -->
+    <dialog id="bids-dialog">
+        <div class="dialog-content-wrapper">
+            <!-- Bids dialog content will be rendered here -->
+        </div>
+    </dialog>
+
+    <!-- Dialog for entering Actuals -->
+    <dialog id="actuals-dialog">
+        <div class="dialog-content-wrapper">
+            <!-- Actuals dialog content will be rendered here -->
+        </div>
+    </dialog>
+
+</body>
+</html>
