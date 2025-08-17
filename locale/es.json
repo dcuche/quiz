@@ -3,8 +3,7 @@
     "title": "Quiz!",
     "header": {
       "title": "Quiz! Web 2025",
-      "changePlayers": "Cambiar jugadores",
-      "restart": "Reiniciar partida"
+      "changePlayers": "Nueva partida"
     }
   },
   "setup": {
@@ -30,11 +29,10 @@
     },
     "panels": {
       "scores": "Puntos por ronda",
-      "totals": "Totales y porcentajes",
-      "statAccumulated": "Acumulado",
+      "totals": "Totales",
+      "statAccumulated": "Puntos",
       "statPercentage": "Porcentaje",
-      "statExactHits": "Aciertos exactos",
-      "summaryTotal": "Total acumulado",
+      "statExactHits": "Ganados",
       "toggleScores": "Mostrar/ocultar panel de puntuaciones",
       "toggleTotals": "Mostrar/ocultar panel de totales"
     }
@@ -48,7 +46,7 @@
       "sumNotEqual": "≠ {round} (válido)",
       "allRequired": "Todas las apuestas son obligatorias.",
       "cancel": "Cancelar",
-      "save": "Guardar y bloquear apuestas"
+      "save": "Listo!"
     },
     "actuals": {
       "title": "Ingresar hechos — Ronda {round}",
@@ -56,7 +54,7 @@
       "sum": "Suma: {sum} / {round}",
       "allRequired": "Todos los hechos son obligatorios.",
       "cancel": "Cancelar",
-      "save": "Guardar y finalizar"
+      "save": "Finalizar"
     }
   }
 }

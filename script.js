@@ -94,8 +94,13 @@ document.addEventListener("DOMContentLoaded", async () => {
             });
         });
 
+        // Percentage over baseline 10 points per completed round.
+        const roundsDone = roundsData.filter((rd) => rd.phase === "done").length;
         const cumTotal = Object.values(cumulative).reduce((a, b) => a + b, 0);
-        players.forEach((p) => { sharePct[p.id] = cumTotal > 0 ? (100 * cumulative[p.id]) / cumTotal : 0; });
+        players.forEach((p) => {
+            // If no rounds completed yet, show 0%. Allow values > 100% if avg > 10/rnd.
+            sharePct[p.id] = roundsDone > 0 ? (100 * cumulative[p.id]) / (10 * roundsDone) : 0;
+        });
         return { cumulative, sharePct, exactHits, cumTotal };
     }
 
@@ -131,10 +136,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         state.roundsData = buildEmptyRounds(R, newPlayers);
         state.step = "play";
         render();
-    }
-    
-    function restartGame() {
-        startGame(state.players.map(p => p.name));
     }
 
     function changePlayers() {
@@ -234,15 +235,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     // -----------------------------
 
     function renderHeader() {
-        const controls = state.step === 'play'
-            ? `<button id="change-players-btn" class="btn btn-secondary">${t('app.header.changePlayers')}</button>
-               <button id="restart-btn" class="btn btn-ghost btn-icon" title="${t('app.header.restart')}"><i data-lucide="refresh-cw"></i></button>`
-            : `<button id="restart-btn" class="btn btn-ghost btn-icon" title="${t('app.header.restart')}"><i data-lucide="refresh-cw"></i></button>`;
-
+        // No top-right controls; keep a clean header with just the title
         return `
             <header>
                 <h1>${t('app.header.title')}</h1>
-                <div class="controls">${controls}</div>
+                <div class="controls"></div>
             </header>
         `;
     }
@@ -425,6 +422,13 @@ document.addEventListener("DOMContentLoaded", async () => {
                     </div>
                 </div>
             </div>
+            <footer class="app-footer">
+                <div class="app-footer-content">
+                    <button id="change-players-btn" class="btn btn-secondary" title="${t('app.header.changePlayers')}">
+                        ${t('app.header.changePlayers')}
+                    </button>
+                </div>
+            </footer>
         `;
         
         renderScoresPanel(tallies);
@@ -475,39 +479,44 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     function renderTotalsPanel(tallies) {
         const leaders = findLeaders(tallies.cumulative);
+        const headerRow = `
+            <div class="totals-header">
+                <div class="totals-player-info totals-player-spacer"></div>
+                <div class="totals-stats">
+                    <div class="stat-label">${t('play.panels.statAccumulated')}</div>
+                    <div class="stat-label">${t('play.panels.statPercentage')}</div>
+                    <div class="stat-label">${t('play.panels.statExactHits')}</div>
+                </div>
+            </div>
+        `;
+
         const playerRows = state.players.map(p => `
             <div class="totals-row">
-                <div class="totals-player-info" style="display:flex; flex-direction:column; align-items:center; gap:0.25rem;">
+                <div class="totals-player-info" style="display:flex; flex-direction:row; align-items:center; gap:0.5rem;">
                     ${leaders.includes(p.id) && tallies.cumTotal > 0 ? `<i data-lucide="crown" style="width:14px; height:14px; color:#facc15;"></i>` : ''}
                     <span>${p.name}</span>
                 </div>
                 <div class="totals-stats">
                     <div>
-                        <div class="stat-label">${t('play.panels.statAccumulated')}</div>
                         <div class="stat-value" style="color: var(--sky-300);">${tallies.cumulative[p.id]}</div>
                     </div>
                     <div>
-                        <div class="stat-label">${t('play.panels.statPercentage')}</div>
-                        <div class="stat-value" style="color: var(--fuchsia-300);">${tallies.sharePct[p.id].toFixed(1)}%</div>
+                        <div class="stat-value" style="color: var(--fuchsia-300);" title="Puntos acumulados / (10 × rondas completadas)">${tallies.sharePct[p.id].toFixed(1)}%</div>
                     </div>
                     <div>
-                        <div class="stat-label">${t('play.panels.statExactHits')}</div>
                         <div class="stat-value" style="color: var(--emerald-300);">${tallies.exactHits[p.id]}</div>
                     </div>
                 </div>
             </div>
         `).join('');
 
-        document.getElementById('totals-panel-content').innerHTML = `
+    document.getElementById('totals-panel-content').innerHTML = `
             <div class="card">
                 <div class="card-header"><h2 class="card-title">${t('play.panels.totals')}</h2></div>
                 <div class="card-content">
+            ${headerRow}
                     <div class="totals-grid">
                         ${playerRows}
-                        <div class="totals-row summary">
-                            <span style="color: var(--slate-400);">${t('play.panels.summaryTotal')}</span>
-                            <span class="stat-value" style="color: var(--indigo-300);">${tallies.cumTotal}</span>
-                        </div>
                     </div>
                 </div>
             </div>`;
@@ -553,7 +562,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                 `).join('')}
             </div>
             <div class="dialog-footer">
-                <span class="footer-note">${t('dialogs.bids.allRequired')}</span>
                 <div class="footer-actions">
                     <button id="cancel-bids-btn" class="btn btn-secondary">${t('dialogs.bids.cancel')}</button>
                     <button id="save-bids-btn" class="btn btn-cyan">${t('dialogs.bids.save')}</button>
@@ -630,7 +638,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                 `).join('')}
             </div>
             <div class="dialog-footer">
-                <span class="footer-note">${t('dialogs.actuals.allRequired')}</span>
                 <div class="footer-actions">
                     <button id="cancel-actuals-btn" class="btn btn-secondary">${t('dialogs.actuals.cancel')}</button>
                     <button id="save-actuals-btn" class="btn btn-fuchsia">${t('dialogs.actuals.save')}</button>
@@ -697,9 +704,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         const target = e.target.closest("button");
         if (!target) return;
 
-        // Header buttons
-        if (target.id === 'restart-btn') restartGame();
-        if (target.id === 'change-players-btn') changePlayers();
+    // Header/Global buttons
+    if (target.id === 'change-players-btn') changePlayers();
         
         // Setup buttons
         if (target.id === 'start-game-btn') {

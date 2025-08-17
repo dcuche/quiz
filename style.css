@@ -43,6 +43,7 @@ body {
 #app-container {
   width: 100%;
   max-width: 1152px; /* max-w-6xl */
+  min-height: 100vh;
   margin: 0 auto;
   padding: 2rem 1rem;
   display: flex;
@@ -108,7 +109,7 @@ header .controls {
 }
 .input::placeholder { color: var(--slate-400); }
 .input:focus { outline: 2px solid var(--sky-500); outline-offset: 2px; }
-.input[type="number"] { -moz-appearance: textfield; }
+.input[type="number"] { appearance: textfield; -moz-appearance: textfield; }
 .input[type="number"]::-webkit-outer-spin-button,
 .input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none; margin: 0;
@@ -126,15 +127,39 @@ header .controls {
   font-size: 0.875rem;
   border: none;
   cursor: pointer;
-  transition: background-color 0.2s, opacity 0.2s;
+  transition: background-color 0.2s, opacity 0.2s, transform 0.2s, box-shadow 0.2s;
   color: var(--slate-50);
 }
 .btn:disabled { cursor: not-allowed; opacity: 0.5; }
 .btn.btn-primary {
-  background: linear-gradient(to right, var(--sky-500), var(--fuchsia-500));
+  background: linear-gradient(135deg, var(--sky-500), var(--fuchsia-500));
+  position: relative;
+  overflow: hidden;
+  transform: translateY(0);
+  box-shadow: 0 4px 15px 0 rgba(14, 165, 233, 0.3);
 }
 .btn.btn-primary:not(:disabled):hover {
-  background: linear-gradient(to right, var(--sky-400), var(--fuchsia-400));
+  background: linear-gradient(135deg, var(--sky-400), var(--fuchsia-400));
+  transform: translateY(-1px);
+  box-shadow: 0 8px 25px 0 rgba(14, 165, 233, 0.4), 0 0 20px rgba(217, 70, 239, 0.3);
+}
+.btn.btn-primary:not(:disabled)::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  transition: left 0.6s;
+}
+.btn.btn-primary:not(:disabled):hover::before {
+  left: 100%;
 }
 .btn.btn-secondary {
   background-color: var(--slate-800);
@@ -246,6 +271,18 @@ tbody tr:nth-child(odd) { background-color: rgba(15, 23, 42, 0.4); }
 
 /* Totals Panel */
 .totals-grid { display: flex; flex-direction: column; gap: 0.75rem; }
+.totals-header {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: grid;
+  grid-template-columns: 1fr auto; /* player spacer | stats */
+  align-items: center;
+  padding: 0.25rem 0.75rem 0.5rem;
+  margin-bottom: 0.25rem;
+  background: linear-gradient(to bottom, rgba(15,23,42,0.95), rgba(15,23,42,0.6));
+  backdrop-filter: blur(2px);
+}
 .totals-row {
   display: flex;
   align-items: center;
@@ -257,12 +294,12 @@ tbody tr:nth-child(odd) { background-color: rgba(15, 23, 42, 0.4); }
 }
 .totals-row.summary { background-color: rgba(15, 23, 42, 0.9); }
 .totals-player-info { display: flex; align-items: center; gap: 0.5rem; }
-.totals-stats { display: flex; align-items: center; gap: 1.5rem; text-align: right; }
-.totals-stats .stat-label { font-size: 0.875rem; color: var(--slate-400); }
+.totals-stats { display: grid; grid-template-columns: 72px 108px 80px; gap: 1.5rem; align-items: center; justify-items: end; }
+.totals-stats .stat-label { font-size: 0.875rem; color: var(--slate-400); text-align: right; white-space: nowrap; }
 .totals-stats .stat-value { font-weight: 600; }
 
 /* Rules Panel */
-.rules-list { list-style-type: disc; padding-left: 1.25rem; space-y: 0.25rem; }
+.rules-list { list-style-type: disc; padding-left: 1.25rem; }
 .rules-list li { margin-bottom: 0.25rem; }
 .rules-list li::marker { color: var(--slate-500); }
 
@@ -328,6 +365,11 @@ tbody tr:nth-child(odd) { background-color: rgba(15, 23, 42, 0.4); }
 }
 .panel-content .card { border: none; background: transparent; }
 
+/* Tighter spacing for Totals card only */
+#totals-panel-content .card-header { padding: 1rem 1.5rem 0.25rem; }
+#totals-panel-content .card-content { padding: 0.75rem 1.5rem 1rem; }
+#totals-panel-content .card-title { margin: 0; }
+
 /* Dialog (Modal) */
 dialog {
   max-width: 560px;
@@ -382,8 +424,19 @@ dialog::backdrop { background-color: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4
   border-top: 1px solid var(--slate-800);
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end; /* right-align actions even if note is missing */
   gap: 0.5rem;
 }
 .dialog-footer .footer-note { font-size: 0.875rem; color: var(--slate-400); }
 .dialog-footer .footer-actions { display: flex; gap: 0.5rem; }
+
+/* Card footer */
+/* App bottom footer (separate from table) */
+.app-footer {
+  margin-top: auto; /* push to bottom of app container */
+  padding-top: 0.5rem;
+}
+.app-footer-content {
+  display: flex;
+  justify-content: flex-end;
+}
