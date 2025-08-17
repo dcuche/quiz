@@ -250,6 +250,9 @@ tbody tr:nth-child(odd) { background-color: rgba(15, 23, 42, 0.4); }
 .current-round-row {
     box-shadow: 0 0 0 1px var(--sky-500)/0.4;
 }
+.upcoming-round-row {
+    opacity: 0.4;
+}
 .invalid-round-row { background-color: rgba(159, 18, 57, 0.3) !important; }
 
 .commander-name {
