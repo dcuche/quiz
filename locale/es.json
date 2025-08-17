@@ -17,15 +17,16 @@
   },
   "play": {
     "table": {
-      "actions": "Acciones",
       "bid": "Apuesta",
       "actual": "Hecho",
-      "enterBid": "Apuesta",
-      "enterActual": "Hechos",
       "unlockBids": "Desbloquear apuestas",
-      "undo": "Deshacer",
       "bidsInvalid": "La suma de apuestas es igual al número de la ronda (no permitido)",
       "actualsInvalid": "Los hechos deben sumar el número de la ronda"
+    },
+    "headerActions": {
+      "bids": "Ronda {round}: Apuestas",
+      "actuals": "Ronda {round}: Hechos",
+      "undo": "Ronda {round}: Deshacer"
     },
     "panels": {
       "scores": "Puntos por ronda",
