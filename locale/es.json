@@ -11,7 +11,7 @@
     "playerNameLabel": "Nombre del jugador {index}",
     "playerPlaceholder": "Jugador {index}",
     "clearName": "Borrar",
-    "playerCountLabel": "Número de jugadores (2–6)",
+    "playerCountLabel": "Número de jugadores (3–6)",
     "roundsFormula": "Rondas = ⌊52 / P⌋ = {rounds}",
     "startGame": "Iniciar partida"
   },
@@ -36,6 +36,11 @@
       "statExactHits": "Ganados",
       "toggleScores": "Mostrar/ocultar panel de puntuaciones",
       "toggleTotals": "Mostrar/ocultar panel de totales"
+    },
+    "roles": {
+      "commander": "Reparte",
+      "bidder": "Dice",
+      "starter": "Parte"
     }
   },
   "dialogs": {

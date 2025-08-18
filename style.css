@@ -222,6 +222,13 @@ header .controls {
     border-color: rgba(192, 38, 211, 0.3);
 }
 
+/* Role badge */
+.badge-role {
+  background-color: rgba(148, 163, 184, 0.2); /* slate-400/20 */
+  color: var(--slate-200);
+  border-color: rgba(100, 116, 139, 0.3); /* slate-500/30 */
+}
+
 /* Table */
 .table-wrapper { overflow-x: auto; }
 table {
@@ -418,7 +425,7 @@ dialog::backdrop { background-color: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4
   border: 1px solid var(--slate-800);
   background-color: rgba(15, 23, 42, 0.7);
 }
-.dialog-player-row .player-name { font-weight: 500; }
+.dialog-player-row .player-name { display:flex; align-items:center; gap:0.5rem; font-weight: 500; }
 .dialog-player-row .input-group { display: flex; align-items: center; gap: 0.5rem; }
 .dialog-player-row .input { width: 5rem; text-align: center; font-size: 1.125rem; }
 .dialog-footer {
