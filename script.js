@@ -238,11 +238,22 @@ document.addEventListener("DOMContentLoaded", async () => {
         let controls = '';
         if (state.step === "play") {
             const currentRoundIndex = state.roundsData.findIndex(r => r.phase !== "done");
+            const prevRoundIndex = currentRoundIndex - 1;
+            let undoControl = '';
+            if (prevRoundIndex >= 0 && state.roundsData[prevRoundIndex]?.phase === 'done') {
+                const pr = state.roundsData[prevRoundIndex];
+                undoControl = `
+                    <button class="btn btn-secondary btn-icon" data-action="revert-final" data-round-index="${prevRoundIndex}" title="${t('play.headerActions.undo', { round: pr.r })}">
+                        <i data-lucide="undo-2" style="width:16px; height:16px;"></i>
+                    </button>
+                `;
+            }
             if (currentRoundIndex !== -1) {
                 const rd = state.roundsData[currentRoundIndex];
                 if (rd.phase === 'bids') {
                     controls = `
                         ${rd.bidsInvalid ? `<span class="badge badge-invalid" title="${t('play.table.bidsInvalid')}"><i data-lucide="alert-triangle" style="width:12px; height:12px;"></i></span>` : ''}
+                        ${undoControl}
                         <button class="btn btn-cyan" data-action="open-bids" data-round-index="${currentRoundIndex}">
                             <i data-lucide="list-ordered" style="width:16px; height:16px;"></i> ${t('play.headerActions.bids', { round: rd.r })}
                         </button>
@@ -250,17 +261,12 @@ document.addEventListener("DOMContentLoaded", async () => {
                 } else if (rd.phase === 'actuals') {
                     controls = `
                         ${rd.actualsInvalid ? `<span class="badge badge-invalid" title="${t('play.table.actualsInvalid')}"><i data-lucide="alert-triangle" style="width:12px; height:12px;"></i></span>` : ''}
+                        ${undoControl}
                         <button class="btn btn-secondary btn-icon" title="${t('play.table.unlockBids')}" data-action="unlock-bids" data-round-index="${currentRoundIndex}">
                             <i data-lucide="unlock" style="width:16px; height:16px;"></i>
                         </button>
                         <button class="btn btn-fuchsia" data-action="open-actuals" data-round-index="${currentRoundIndex}">
                             <i data-lucide="calculator" style="width:16px; height:16px;"></i> ${t('play.headerActions.actuals', { round: rd.r })}
-                        </button>
-                    `;
-                } else if (rd.phase === 'done') {
-                    controls = `
-                        <button class="btn btn-secondary" data-action="revert-final" data-round-index="${currentRoundIndex}">
-                            ${t('play.headerActions.undo', { round: rd.r })}
                         </button>
                     `;
                 }
