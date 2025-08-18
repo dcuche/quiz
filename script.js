@@ -126,7 +126,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // State Changers & Actions
     // -----------------------------
     function startGame(playerNames) {
-        const P = clamp(playerNames.length, 2, 6);
+        const P = clamp(playerNames.length, 3, 6);
         const newPlayers = playerNames.slice(0, P).map((n, i) => ({ id: `p${i + 1}`, name: n.trim() || t('setup.playerPlaceholder', { index: i + 1 }) }));
         const R = roundsForPlayers(P);
         
@@ -144,7 +144,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
     
     function updatePlayerCount(newCount) {
-        const P = clamp(newCount, 2, 6);
+        const P = clamp(newCount, 3, 6);
         state.playerCount = P;
         const currentPlayers = state.players.map(p => p.name);
         const nextPlayers = Array.from({ length: P }, (_, i) => ({
@@ -319,7 +319,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                                 id="player-count"
                                 class="input"
                                 type="number"
-                                min="2"
+                                min="3"
                                 max="6"
                                 step="1"
                                 value="${state.playerCount}"
@@ -532,6 +532,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (!open) { bidsDialogEl.close(); return; }
 
         const rd = state.roundsData[roundIndex];
+        const commanderIndex = roundIndex % state.players.length;
+        const orderedPlayers = [
+            ...state.players.slice(commanderIndex),
+            ...state.players.slice(0, commanderIndex)
+        ];
         const tempBids = { ...rd.bids };
 
         const updateDialogState = () => {
@@ -555,16 +560,18 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <p>${t('dialogs.bids.instruction', { round: rd.r })}</p>
             </div>
             <div class="dialog-body">
-                ${state.players.map(p => `
+                ${orderedPlayers.map((p, i) => {
+                    const tag = i === 0 ? t('play.roles.commander') : i === 1 ? t('play.roles.bidder') : i === 2 ? t('play.roles.starter') : '';
+                    return `
                     <div class="dialog-player-row">
-                        <span class="player-name">${p.name}</span>
+                        <span class="player-name">${p.name}${tag ? ` <span class=\"badge badge-role\">${tag}</span>` : ''}</span>
                         <div class="input-group">
                             <button class="btn btn-secondary btn-icon" data-action="dec" data-player-id="${p.id}">-</button>
                             <input type="number" class="input bid-input" min="0" max="${rd.r}" value="${tempBids[p.id] ?? ''}" data-player-id="${p.id}">
                             <button class="btn btn-secondary btn-icon" data-action="inc" data-player-id="${p.id}">+</button>
                         </div>
-                    </div>
-                `).join('')}
+                    </div>`;
+                }).join('')}
             </div>
             <div class="dialog-footer">
                 <div class="footer-actions">

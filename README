@@ -4,7 +4,7 @@ Simple web‑based scoreboard for the **Quiz!** card game.
 The interface text is in Spanish and runs entirely in the browser.
 
 ## Features
-- Player setup screen (2–6 players) with dynamic round count.
+- Player setup screen (3–6 players) with dynamic round count.
 - Rotating commander shown next to each round number.
 - Bids and actuals entered in modal dialogs with validation and in-dialog lock/finalize actions.
 - Automatic scoring, per-round and cumulative summaries.
