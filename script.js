@@ -18,9 +18,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         step: "setup", // "setup" | "play"
         playerCount: 3,
         players: [
-            { id: "p1", name: "P1" },
-            { id: "p2", name: "P2" },
-            { id: "p3", name: "P3" },
+            { id: "p1", name: "Jugador 1" },
+            { id: "p2", name: "Jugador 2" },
+            { id: "p3", name: "Jugador 3" },
         ],
         rounds: 17,
         roundsData: [],
@@ -735,7 +735,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             const idx = parseInt(target.dataset.index, 10);
             updatePlayerName(idx, '');
             const input = document.getElementById(`name-${idx}`);
-            if (input) input.value = '';
+            if (input) {
+                input.value = '';
+                input.focus(); // put cursor back into the input for immediate typing
+            }
             const startBtn = document.getElementById('start-game-btn');
             if (startBtn) startBtn.disabled = true;
             return; // no further action needed
