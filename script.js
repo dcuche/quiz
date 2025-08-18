@@ -238,7 +238,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         let controls = '';
         if (state.step === "play") {
             const currentRoundIndex = state.roundsData.findIndex(r => r.phase !== "done");
-            const prevRoundIndex = currentRoundIndex - 1;
             if (currentRoundIndex !== -1) {
                 const rd = state.roundsData[currentRoundIndex];
                 if (rd.phase === 'bids') {
@@ -258,15 +257,13 @@ document.addEventListener("DOMContentLoaded", async () => {
                             <i data-lucide="calculator" style="width:16px; height:16px;"></i> ${t('play.headerActions.actuals', { round: rd.r })}
                         </button>
                     `;
+                } else if (rd.phase === 'done') {
+                    controls = `
+                        <button class="btn btn-secondary" data-action="revert-final" data-round-index="${currentRoundIndex}">
+                            ${t('play.headerActions.undo', { round: rd.r })}
+                        </button>
+                    `;
                 }
-            }
-            if (prevRoundIndex >= 0 && state.roundsData[prevRoundIndex]?.phase === 'done') {
-                const prevRound = state.roundsData[prevRoundIndex];
-                controls += `
-                    <button class="btn btn-secondary" data-action="revert-final" data-round-index="${prevRoundIndex}">
-                        ${t('play.headerActions.undo', { round: prevRound.r })}
-                    </button>
-                `;
             }
         }
         return `
