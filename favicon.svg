@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <style>
+      .spade{fill:#111}
+    </style>
+  </defs>
+  <!-- Simple spade shape -->
+  <path class="spade" d="M32 4c-7.8 9.1-23 18.4-23 30.1C9 42.9 15.1 49 23 49c3.4 0 6.5-1.4 9-3.7 2.5 2.3 5.6 3.7 9 3.7 7.9 0 14-6.1 14-14.9C55 22.4 39.8 13.1 32 4zM27 50c-1.4 2.4-3.7 5.5-6 8h22c-2.3-2.5-4.6-5.6-6-8h-10z"/>
+</svg>
